@@ -7,7 +7,8 @@
 
 
 
-void nanoCmd(const std::string& filepath);
+void lireFichier(char fichier[]);
+void nano();
 
 
 

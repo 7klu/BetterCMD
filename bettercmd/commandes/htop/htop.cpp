@@ -1,22 +1,46 @@
 #include "htop.h"
+#include <csignal>
 #include <iostream>
 #include <windows.h>
 #include <psapi.h>
 #include <thread>
 #include <chrono>
+#include <atomic>
+
+// Variable atomique pour indiquer si Ctrl+C a été pressé
+std::atomic<bool> interrompreBoucle(false);
+
+// Gestionnaire de signal pour capturer Ctrl+C
+void handleSignal(int signal) {
+    if (signal == SIGINT) {
+        interrompreBoucle = true; // Déclenche l'interruption
+    }
+}
 
 void htopCmd() {
+    // Attache le gestionnaire de signal
+    signal(SIGINT, handleSignal);
+
+    system("cls");
+
     while (true) {
-        // Get the handle to the current process
+        // Vérifie si Ctrl+C a été pressé
+        if (interrompreBoucle) {
+            std::cout << "\nCtrl+C capturé ! Retour au menu principal...\n";
+            interrompreBoucle = false; // Réinitialise l'état
+            return; // Quitte la boucle et retourne au menu
+        }
+
+        // Obtenir le handle du processus actuel
         HANDLE hProcess = GetCurrentProcess();
 
-        // Get memory usage information
+        // Obtenir les informations sur l'utilisation de la mémoire
         PROCESS_MEMORY_COUNTERS pmc;
         if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
             std::cout << "Memory Usage: " << pmc.WorkingSetSize / 1024 << " KB" << std::endl;
         }
 
-        // Get CPU usage information
+        // Obtenir les informations sur l'utilisation du CPU
         FILETIME ftSysIdle, ftSysKernel, ftSysUser;
         FILETIME ftProcCreation, ftProcExit, ftProcKernel, ftProcUser;
 
@@ -34,15 +58,18 @@ void htopCmd() {
             procUser.LowPart = ftProcUser.dwLowDateTime;
             procUser.HighPart = ftProcUser.dwHighDateTime;
 
-            std::cout << "CPU Usage: " << (procKernel.QuadPart + procUser.QuadPart) * 100 / (sysKernel.QuadPart + sysUser.QuadPart) << "%" << std::endl;
+            std::cout << "CPU Usage: " << (procKernel.QuadPart + procUser.QuadPart) * 100 /
+                                         (sysKernel.QuadPart + sysUser.QuadPart)
+                      << "%" << std::endl;
         }
 
+        // Fermer le handle
         CloseHandle(hProcess);
 
-        // Sleep for 1 second before updating again
+        // Pause de 1 seconde avant la mise à jour
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        // Clear the console
+        // Effacer l'écran
         system("cls");
     }
 }

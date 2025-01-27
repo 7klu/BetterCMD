@@ -7,10 +7,7 @@
 
 #include <string>
 
-class say {
-public:
-    static void sayCmd(const std::string& message);
-};
+void echo_command();
 
 
 

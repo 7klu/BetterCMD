@@ -2,6 +2,7 @@
 #include "help.h"
 
 void helpCmd() {
+    system("cls");
     std::cout << "+------------------------------------------+\n";
     std::cout << "| Commandes disponibles :                  |\n";
     std::cout << "+------------------------------------------+\n";
