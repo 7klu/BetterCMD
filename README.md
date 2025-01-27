@@ -21,7 +21,7 @@ Voici une liste des commandes actuellement disponibles et en développement :
 
 ## Installation
 
-1.  Clonez le dépôt : `git clone https://github.com/VOTRE_NOM_UTILISATEUR/BetterCMD.git`
+1.  Clonez le dépôt : `git clone https://github.com/alextoutcourt72/BetterCMD.git`
 2.  Utilisez un compilateur C++ (comme MinGW ou Visual Studio) pour compiler le code source.
 3.  Exécutez l'exécutable `BetterCMD.exe`.
 
